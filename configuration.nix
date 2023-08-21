@@ -75,6 +75,14 @@
     xkbVariant = "";
   };
 
+  # Natural scrolling
+  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
+    [org/gnome/desktop/peripherals/mouse]
+    natural-scroll=true
+    [org/gnome/desktop/peripherals/touchpad]
+    natural-scroll=true
+  '';
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
