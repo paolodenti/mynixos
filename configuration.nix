@@ -164,7 +164,6 @@ in
       pkgs.telegram-desktop
       pkgs.zoom-us
       pkgs.qFlipper
-      pkgs.vscode-fhs
     ];
     programs.home-manager.enable = true;
     programs.zsh = {
@@ -271,6 +270,7 @@ in
   };
 
   # List services that you want to enable:
+  services.flatpak.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
