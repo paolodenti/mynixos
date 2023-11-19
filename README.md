@@ -8,8 +8,11 @@ Manual setup
 
 * install nixos
 * from console
+  * `sudo nix-channel --add https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz home-manager`
+  * `sudo nix-channel --update`
   * `sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable`
   * `sudo nix-channel --update`
+  * `nix-shell -p git`
   * `git clone https://github.com/paolodenti/mynixos.git`
   * `sudo cp mynixos/configuration.nix /etc/nixos/configuration.nix`
   * `sudo nixos-rebuild switch`
