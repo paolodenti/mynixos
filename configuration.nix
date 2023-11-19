@@ -158,6 +158,7 @@ in
       pkgs.httpie
       pkgs.dbeaver
       pkgs.postman
+      pkgs.jetbrains.idea-ultimate
     ];
     programs.home-manager.enable = true;
     programs.zsh = {
