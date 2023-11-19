@@ -28,3 +28,11 @@ Install SDKMAN manually, without updating zshrc
 * logout / login
 * `sdk install java 17.0.9-amzn`
 * `sdk install maven 3.9.5 `
+
+## Notes
+
+### To update
+
+```
+sudo nixos-rebuild switch --upgrade
+```
