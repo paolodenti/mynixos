@@ -5,6 +5,7 @@
 { config, pkgs, ... }:
 
 let
+  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz";
 in
 {
@@ -152,6 +153,9 @@ in
 
   # Home Manager
   home-manager = {
+    extraSpecialArgs = {
+      inherit unstable;
+    };
     users = {
       pdenti = { pkgs, ... }: {
         home.username = "pdenti";
@@ -170,7 +174,7 @@ in
           pkgs.telegram-desktop
           pkgs.zoom-us
           pkgs.qFlipper
-          pkgs.vscode-fhs
+          unstable.vscode-fhs
         ];
         programs.home-manager.enable = true;
         programs.zsh = {
