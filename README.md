@@ -18,7 +18,7 @@ Manual setup
   * copy the private `age.txt` to `$HOME/.sops/age.txt`
   * `sops --decrypt --age $(agepublic) --output $HOME/.secrets mynixos/.secrets`
 
-TODO: use agenix
+TODO: check out agenix
 
 ## Manual installations (not the NixOS way)
 
