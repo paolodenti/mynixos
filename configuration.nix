@@ -163,6 +163,7 @@ in
       pkgs.authy
       pkgs.telegram-desktop
       pkgs.zoom-us
+      pkgs.qFlipper
     ];
     programs.home-manager.enable = true;
     programs.zsh = {
