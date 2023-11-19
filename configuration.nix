@@ -127,6 +127,8 @@ in
     jq
     google-cloud-sdk
     doctl
+    sops
+    age
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
