@@ -14,9 +14,9 @@ Manual setup
 
 ## Install /home/pdenti secrets
 
-  * `mkdir -p $HOME/.sops`
-  * copy the private `age.txt` to `$HOME/.sops/age.txt`
-  * `sops --decrypt --age $(agepublic) --output $HOME/.secrets mynixos/.secrets`
+* `mkdir -p $HOME/.sops`
+* copy the private `age.txt` to `$HOME/.sops/age.txt`
+* `sops --decrypt --age $(agepublic) --output $HOME/.secrets mynixos/.secrets`
 
 TODO: check out agenix
 
