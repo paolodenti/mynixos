@@ -19,3 +19,9 @@ Manual setup
   * `sops --decrypt --age $(agepublic) --output $HOME/.secrets mynixos/.secrets`
 
 TODO: use agenix
+
+## Manual installations (not the NixOS way)
+
+Install SDKMAN manually, without updating zshrc
+
+* `curl -s "https://get.sdkman.io?rcupdate=false" | bash`
