@@ -129,6 +129,7 @@ in
     doctl
     sops
     age
+    zip
     unzip
   ];
 
