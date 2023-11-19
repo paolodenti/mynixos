@@ -162,6 +162,7 @@ in
       pkgs._1password
       pkgs.authy
       pkgs.telegram-desktop
+      pkgs.zoom-us
     ];
     programs.home-manager.enable = true;
     programs.zsh = {
