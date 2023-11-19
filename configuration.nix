@@ -164,6 +164,7 @@ in
       pkgs.telegram-desktop
       pkgs.zoom-us
       pkgs.qFlipper
+      pkgs.vscode-fhs
     ];
     programs.home-manager.enable = true;
     programs.zsh = {
