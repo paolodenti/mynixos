@@ -168,7 +168,7 @@ in
           pkgs.dbeaver
           pkgs.postman
           pkgs.jetbrains.idea-ultimate
-          unstable._1password-gui
+          pkgs._1password-gui
           pkgs.authy
           pkgs.telegram-desktop
           pkgs.zoom-us
