@@ -160,6 +160,8 @@ in
       pkgs.postman
       pkgs.jetbrains.idea-ultimate
       pkgs._1password
+      pkgs.authy
+      pkgs.telegram-desktop
     ];
     programs.home-manager.enable = true;
     programs.zsh = {
