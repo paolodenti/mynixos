@@ -4,21 +4,28 @@
 
 { config, pkgs, ... }:
 
+let
+  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz";
+in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      <home-manager/nixos>
+      (import "${home-manager}/nixos")
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub.enable = true;
+  boot.loader.grub.device = "/dev/sda";
+  boot.loader.grub.useOSProber = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # docker
-  virtualisation.docker.enable = true; 
+  virtualisation.docker = {
+    enable = true;
+    extraOptions = "--iptables=false";
+  };
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -51,37 +58,15 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Disable auto suspend
-  services.xserver.displayManager.gdm.autoSuspend = false;
-  security.polkit.extraConfig = ''
-    polkit.addRule(function(action, subject) {
-        if (action.id == "org.freedesktop.login1.suspend" ||
-            action.id == "org.freedesktop.login1.suspend-multiple-sessions" ||
-            action.id == "org.freedesktop.login1.hibernate" ||
-            action.id == "org.freedesktop.login1.hibernate-multiple-sessions")
-        {
-            return polkit.Result.NO;
-        }
-    });
-  '';
+  # Enable the KDE Plasma Desktop Environment.
+  services.xserver.displayManager.sddm.enable = true;
+  services.xserver.desktopManager.plasma5.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
     xkbVariant = "";
   };
-
-  # Natural scrolling
-  services.xserver.desktopManager.gnome.extraGSettingsOverrides = ''
-    [org/gnome/desktop/peripherals/mouse]
-    natural-scroll=true
-    [org/gnome/desktop/peripherals/touchpad]
-    natural-scroll=true
-  '';
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -106,17 +91,69 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users = {
+    mutableUsers = true;
+    defaultUserShell = pkgs.bash;
+    users = {
+      pdenti = {
+        isNormalUser = true;
+        description = "Paolo Denti";
+        extraGroups = [ "networkmanager" "wheel" "docker" ];
+        password = "password";
+        shell = pkgs.zsh;
+        openssh.authorizedKeys.keys = [ "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAt/0brzr0xGFpaAgCAhNNXPj3EuCfmFndxyKlH/uLMnre9y6RzSOxHNJbiJy+jdkKsPv2zvISwnf7Z9Mv7rCZElRd9EKVZ7YZNVE02zfQCK/qEbhttacVvDEuPps55Mwywih+YlslsVq+UJ2I7Cyk6tnHuSXlV54qFi9kPeONwdtI9/tnYkpcpUzmFWWlHOcLPWgTM/8hczDCGSwTbQj+KHKKI9Wv5pCifPrgJQtPUeZV2Qqb+1ksxgNX841APdjUVDnZyuNa7Rd6+8WBWXt9I/wHVFzB5gTa08fsbeYOjaJ5Pg7oLYIKfJKKJaQ6jgOcU4eVCDJTscjxHms36vpK1w== pd@pdmac" ];
+      };
+    };
+  };
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
+  # List packages installed in system profile. To search, run:
+  # $ nix search wget
+  environment.systemPackages = with pkgs; [
+    vim
+    curl
+    wget
+    git
+    gnumake42
+    zsh
+    kubectl
+    stern
+    helm
+    terraform
+    k9s
+    jq
+    google-cloud-sdk
+    doctl
+  ];
+
+  # Some programs need SUID wrappers, can be configured further or are
+  # started in user sessions.
+  # programs.mtr.enable = true;
+  # programs.gnupg.agent = {
+  #   enable = true;
+  #   enableSSHSupport = true;
+  # };
   programs = {
     zsh = {
       enable = true;
     };
   };
 
+  # Home Manager
   home-manager.users.pdenti = { pkgs, ... }: {
     home.username = "pdenti";
     home.homeDirectory = "/home/pdenti";
     home.stateVersion = "23.05";
-    home.packages = [ pkgs.firefox pkgs.httpie ];
+    nixpkgs.config.allowUnfree = true;
+    home.packages = [
+      pkgs.firefox
+      pkgs.google-chrome
+      pkgs.httpie
+      pkgs.dbeaver
+    ];
     programs.home-manager.enable = true;
     programs.zsh = {
       enable = true;
@@ -129,7 +166,7 @@
       };
       oh-my-zsh = {
         enable = true;
-        theme = "gnzh";
+        theme = "agnoster";
         plugins = [
           "kubectl"
           "copyfile"
@@ -138,13 +175,9 @@
           "wd"
           "web-search"
           "sudo"
-          "docker"
         ];
       };
       initExtra = ''
-        zstyle ':completion:*:*:docker:*' option-stacking yes
-        zstyle ':completion:*:*:docker-*:*' option-stacking yes
-
         DEFAULT_USER="$USER"
         CASE_SENSITIVE="true"
 
@@ -181,11 +214,6 @@
           git checkout -b "$branch" && make upgrade
         }
 
-        ngrokstart() {
-          port="$1"
-          ngrok http $port --host-header="localhost:$port"
-        }
-
         # import my secrets
         if [ -f $HOME/.secrets ]; then                          
           source $HOME/.secrets                                   
@@ -203,6 +231,7 @@
         };
         push = {
           autoSetupRemote = "true";
+          default = "current";
         };
         init = {
           defaultBranch = "main";
@@ -217,42 +246,7 @@
     };
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users = {
-    mutableUsers = true;
-    defaultUserShell = pkgs.zsh;
-    users = {
-      pdenti = {
-        isNormalUser = true;
-        description = "Paolo Denti";
-        extraGroups = [ "networkmanager" "wheel" "docker" ];
-        openssh.authorizedKeys.keys  = [ "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAt/0brzr0xGFpaAgCAhNNXPj3EuCfmFndxyKlH/uLMnre9y6RzSOxHNJbiJy+jdkKsPv2zvISwnf7Z9Mv7rCZElRd9EKVZ7YZNVE02zfQCK/qEbhttacVvDEuPps55Mwywih+YlslsVq+UJ2I7Cyk6tnHuSXlV54qFi9kPeONwdtI9/tnYkpcpUzmFWWlHOcLPWgTM/8hczDCGSwTbQj+KHKKI9Wv5pCifPrgJQtPUeZV2Qqb+1ksxgNX841APdjUVDnZyuNa7Rd6+8WBWXt9I/wHVFzB5gTa08fsbeYOjaJ5Pg7oLYIKfJKKJaQ6jgOcU4eVCDJTscjxHms36vpK1w== pd@pdmac" ];
-        shell = pkgs.zsh;
-      };
-    };
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    vim
-    curl
-    wget
-    git
-    gnumake42
-    zsh
-    kubectl
-    stern
-    helm
-    terraform
-    k9s
-    jq
-    google-cloud-sdk
-    doctl
-  ];
+  # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
