@@ -131,6 +131,7 @@ in
     age
     zip
     unzip
+    xdg-utils
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -166,7 +167,6 @@ in
           pkgs.telegram-desktop
           pkgs.zoom-us
           pkgs.qFlipper
-          pkgs.xdg-utils
           pkgs.vscode-fhs
         ];
         programs.home-manager.enable = true;
