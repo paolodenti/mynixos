@@ -188,6 +188,13 @@ in
         export CLICOLOR=1
         export LS_COLORS="di=33:ln=32:so=35:pi=33:ex=31:bd=34;46:cd=37;43:su=37;41:sg=30;46:tw=37;42:ow=37;43"
 
+        export SOPS_AGE_KEY_FILE=$HOME/.sops/age.txt
+
+        # age
+        agepublic() {
+          cat $SOPS_AGE_KEY_FILE | grep -oP "public key: \K(.*)"
+        }
+
         # git helpers
         gitmerge() {
           destination="$1"
