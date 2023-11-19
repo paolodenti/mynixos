@@ -159,6 +159,7 @@ in
       pkgs.dbeaver
       pkgs.postman
       pkgs.jetbrains.idea-ultimate
+      pkgs._1password
     ];
     programs.home-manager.enable = true;
     programs.zsh = {

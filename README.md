@@ -36,3 +36,9 @@ Install SDKMAN manually, without updating zshrc
 ```
 sudo nixos-rebuild switch --upgrade
 ```
+
+### To garbage collect and clean boot menu
+
+```
+clear-nix-boot-menu
+```
