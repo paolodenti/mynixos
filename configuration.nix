@@ -153,6 +153,7 @@ in
       pkgs.google-chrome
       pkgs.httpie
       pkgs.dbeaver
+      pkgs.postman
     ];
     programs.home-manager.enable = true;
     programs.zsh = {
