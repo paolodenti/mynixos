@@ -5,13 +5,13 @@
 { config, pkgs, ... }:
 
 let
-  home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz";
+  unstable = import <nixos-unstable> { config = { allowUnfree = true; }; };
 in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      (import "${home-manager}/nixos")
+      <home-manager/nixos>
     ];
 
   # Bootloader.
@@ -59,8 +59,11 @@ in
   services.xserver.enable = true;
 
   # Enable the KDE Plasma Desktop Environment.
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+  # services.xserver.displayManager.sddm.enable = true;
+  # services.xserver.desktopManager.plasma5.enable = true;
+  # Enable the GNOME Desktop Environment.
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
@@ -131,6 +134,7 @@ in
     age
     zip
     unzip
+    xdg-utils
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -147,125 +151,133 @@ in
   };
 
   # Home Manager
-  home-manager.users.pdenti = { pkgs, ... }: {
-    home.username = "pdenti";
-    home.homeDirectory = "/home/pdenti";
-    home.stateVersion = "23.05";
-    nixpkgs.config.allowUnfree = true;
-    home.packages = [
-      pkgs.firefox
-      pkgs.google-chrome
-      pkgs.httpie
-      pkgs.dbeaver
-      pkgs.postman
-      pkgs.jetbrains.idea-ultimate
-      pkgs._1password
-      pkgs.authy
-      pkgs.telegram-desktop
-      pkgs.zoom-us
-      pkgs.qFlipper
-    ];
-    programs.home-manager.enable = true;
-    programs.zsh = {
-      enable = true;
-      enableAutosuggestions = true;
-      enableSyntaxHighlighting = true;
-      shellAliases = {
-        ll = "ls -lA";
-        sshpassword = "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no";
-        clear-nix-boot-menu = "sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
-      };
-      oh-my-zsh = {
-        enable = true;
-        theme = "agnoster";
-        plugins = [
-          "kubectl"
-          "copyfile"
-          "copypath"
-          "history"
-          "wd"
-          "web-search"
-          "sudo"
+  home-manager = {
+    extraSpecialArgs = {
+      inherit unstable;
+    };
+    users = {
+      pdenti = { pkgs, ... }: {
+        home.username = "pdenti";
+        home.homeDirectory = "/home/pdenti";
+        home.stateVersion = "23.05";
+        nixpkgs.config.allowUnfree = true;
+        home.packages = [
+          pkgs.firefox
+          pkgs.google-chrome
+          pkgs.httpie
+          pkgs.dbeaver
+          pkgs.postman
+          pkgs.jetbrains.idea-ultimate
+          pkgs._1password-gui
+          pkgs.authy
+          pkgs.telegram-desktop
+          pkgs.zoom-us
+          pkgs.qFlipper
+          unstable.vscode-fhs
         ];
+        programs.home-manager.enable = true;
+        programs.zsh = {
+          enable = true;
+          enableAutosuggestions = true;
+          enableSyntaxHighlighting = true;
+          shellAliases = {
+            ll = "ls -lA";
+            sshpassword = "ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no";
+            clear-nix-boot-menu = "sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
+          };
+          oh-my-zsh = {
+            enable = true;
+            theme = "agnoster";
+            plugins = [
+              "kubectl"
+              "copyfile"
+              "copypath"
+              "history"
+              "wd"
+              "web-search"
+              "sudo"
+            ];
+          };
+          initExtra = ''
+            DEFAULT_USER="$USER"
+            CASE_SENSITIVE="true"
+
+            export VISUAL=vim
+            export EDITOR="$VISUAL"
+
+            export CLICOLOR=1
+            export LS_COLORS="di=33:ln=32:so=35:pi=33:ex=31:bd=34;46:cd=37;43:su=37;41:sg=30;46:tw=37;42:ow=37;43"
+
+            mkdir -p $HOME/.sops
+            export SOPS_AGE_KEY_FILE=$HOME/.sops/age.txt
+
+            # age
+            agepublic() {
+              cat $SOPS_AGE_KEY_FILE | grep -oP "public key: \K(.*)"
+            }
+
+            # git helpers
+            gitmerge() {
+              destination="$1"
+
+              if [[ "" == "$destination" ]]; then
+                echo "usage: 'gitmerge <destination branch>'"
+                return
+              fi
+              if ! git show-ref --quiet "refs/heads/$destination"; then
+                echo "$destination branch not found"
+                return
+              fi
+
+              branch=`git branch 2> /dev/null | grep \* | sed 's#\*\ \(.*\)#\1#'`
+              if [[ "$branch" == "$destination" ]]; then
+                echo "cannot merge on the same branch"
+                return
+              fi
+
+              git checkout "$destination" && git pull && git branch -d "branch" && git remote prune origin
+            }
+
+            gitbump() {
+              branch="$1"
+              git checkout -b "$branch" && make upgrade
+            }
+
+            # import my secrets
+            if [ -f $HOME/.secrets ]; then                          
+              source $HOME/.secrets                                   
+            fi   
+
+            #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+            export SDKMAN_DIR="$HOME/.sdkman"
+            [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+          '';
+        };
+        programs.git = {
+          package = pkgs.gitAndTools.gitFull;
+          enable = true;
+          userName = "Paolo Denti";
+          userEmail = "paolo.denti@gmail.com";
+          extraConfig = {
+            core = {
+              editor = "vim";
+            };
+            push = {
+              autoSetupRemote = "true";
+              default = "current";
+            };
+            init = {
+              defaultBranch = "main";
+            };
+          };
+        };
+        programs.vim = {
+          enable = true;
+          extraConfig = ''
+            syntax on
+          '';
+        };
       };
-      initExtra = ''
-        DEFAULT_USER="$USER"
-        CASE_SENSITIVE="true"
-
-        export VISUAL=vim
-        export EDITOR="$VISUAL"
-
-        export CLICOLOR=1
-        export LS_COLORS="di=33:ln=32:so=35:pi=33:ex=31:bd=34;46:cd=37;43:su=37;41:sg=30;46:tw=37;42:ow=37;43"
-
-        mkdir -p $HOME/.sops
-        export SOPS_AGE_KEY_FILE=$HOME/.sops/age.txt
-
-        # age
-        agepublic() {
-          cat $SOPS_AGE_KEY_FILE | grep -oP "public key: \K(.*)"
-        }
-
-        # git helpers
-        gitmerge() {
-          destination="$1"
-
-          if [[ "" == "$destination" ]]; then
-            echo "usage: 'gitmerge <destination branch>'"
-            return
-          fi
-          if ! git show-ref --quiet "refs/heads/$destination"; then
-            echo "$destination branch not found"
-            return
-          fi
-
-          branch=`git branch 2> /dev/null | grep \* | sed 's#\*\ \(.*\)#\1#'`
-          if [[ "$branch" == "$destination" ]]; then
-            echo "cannot merge on the same branch"
-            return
-          fi
-
-          git checkout "$destination" && git pull && git branch -d "branch" && git remote prune origin
-        }
-
-        gitbump() {
-          branch="$1"
-          git checkout -b "$branch" && make upgrade
-        }
-
-        # import my secrets
-        if [ -f $HOME/.secrets ]; then                          
-          source $HOME/.secrets                                   
-        fi   
-
-        #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-        export SDKMAN_DIR="$HOME/.sdkman"
-        [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-      '';
-    };
-    programs.git = {
-      package = pkgs.gitAndTools.gitFull;
-      enable = true;
-      userName = "Paolo Denti";
-      userEmail = "paolo.denti@gmail.com";
-      extraConfig = {
-        core = {
-          editor = "vim";
-        };
-        push = {
-          autoSetupRemote = "true";
-          default = "current";
-        };
-        init = {
-          defaultBranch = "main";
-        };
-      };
-    };
-    programs.vim = {
-      enable = true;
-      extraConfig = ''
-        syntax on
-      '';
     };
   };
 
