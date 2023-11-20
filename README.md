@@ -39,13 +39,13 @@ Enable flatpak repo
 
 ## Notes
 
-### To update
+### To force update (autoupdate is enabled)
 
 ```
 sudo nix-channel --update && sudo nixos-rebuild switch --upgrade
 ```
 
-### To force garbage collect and clean boot menu
+### To force garbage collect and clean boot menu (autogc is enabled
 
 ```
 clear-nix-boot-menu
