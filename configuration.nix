@@ -160,11 +160,15 @@ in
     extraSpecialArgs = {
       inherit unstable;
     };
+
     users = {
       pdenti = { pkgs, ... }: {
-        home.username = "pdenti";
-        home.homeDirectory = "/home/pdenti";
-        home.stateVersion = "23.05";
+        home = {
+          username = "pdenti";
+          homeDirectory = "/home/pdenti";
+          stateVersion = "23.05";
+        };
+
         nixpkgs.config.allowUnfree = true;
         home.packages = [
           pkgs.firefox
@@ -180,7 +184,7 @@ in
           pkgs.qFlipper
           unstable.vscode-fhs
         ];
-        programs.home-manager.enable = true;
+
         programs.zsh = {
           enable = true;
           enableAutosuggestions = true;
@@ -258,6 +262,7 @@ in
             [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
           '';
         };
+
         programs.git = {
           package = pkgs.gitAndTools.gitFull;
           enable = true;
@@ -276,6 +281,7 @@ in
             };
           };
         };
+
         programs.vim = {
           enable = true;
           extraConfig = ''
