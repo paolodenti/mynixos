@@ -57,3 +57,12 @@ sudo nix-channel --update && sudo nixos-rebuild switch --upgrade
 ```
 clear-nix-boot-menu
 ```
+
+## TODO
+
+* check out agenix or sops-nix
+* move to flakes
+* get rid of the manual sw setups
+* get rid of nvm and move to nix-shell
+* create different configuration for different hosts and find a smart way to link the right configuration/hardware config
+* move home manager users out of configuration.nix
