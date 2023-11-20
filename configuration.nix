@@ -160,27 +160,31 @@ in
     extraSpecialArgs = {
       inherit unstable;
     };
+
     users = {
       pdenti = { pkgs, ... }: {
-        home.username = "pdenti";
-        home.homeDirectory = "/home/pdenti";
-        home.stateVersion = "23.05";
         nixpkgs.config.allowUnfree = true;
-        home.packages = [
-          pkgs.firefox
-          pkgs.google-chrome
-          pkgs.httpie
-          pkgs.dbeaver
-          pkgs.postman
-          pkgs.jetbrains.idea-ultimate
-          pkgs._1password-gui
-          pkgs.authy
-          pkgs.telegram-desktop
-          pkgs.zoom-us
-          pkgs.qFlipper
-          unstable.vscode-fhs
-        ];
-        programs.home-manager.enable = true;
+        home = {
+          username = "pdenti";
+          homeDirectory = "/home/pdenti";
+          stateVersion = "23.05";
+
+          packages = [
+            pkgs.firefox
+            pkgs.google-chrome
+            pkgs.httpie
+            pkgs.dbeaver
+            pkgs.postman
+            pkgs.jetbrains.idea-ultimate
+            pkgs._1password-gui
+            pkgs.authy
+            pkgs.telegram-desktop
+            pkgs.zoom-us
+            pkgs.qFlipper
+            unstable.vscode-fhs
+          ];
+        };
+
         programs.zsh = {
           enable = true;
           enableAutosuggestions = true;
@@ -258,6 +262,7 @@ in
             [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
           '';
         };
+
         programs.git = {
           package = pkgs.gitAndTools.gitFull;
           enable = true;
@@ -276,6 +281,7 @@ in
             };
           };
         };
+
         programs.vim = {
           enable = true;
           extraConfig = ''
