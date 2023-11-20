@@ -45,7 +45,7 @@ Enable flatpak repo
 sudo nixos-rebuild switch --upgrade
 ```
 
-### To garbage collect and clean boot menu
+### To force garbage collect and clean boot menu
 
 ```
 clear-nix-boot-menu
