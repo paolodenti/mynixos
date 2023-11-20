@@ -42,7 +42,7 @@ Enable flatpak repo
 ### To update
 
 ```
-sudo nixos-rebuild switch --upgrade
+sudo nix-channel --update && sudo nixos-rebuild switch --upgrade
 ```
 
 ### To force garbage collect and clean boot menu
