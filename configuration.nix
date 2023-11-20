@@ -163,27 +163,27 @@ in
 
     users = {
       pdenti = { pkgs, ... }: {
+        nixpkgs.config.allowUnfree = true;
         home = {
           username = "pdenti";
           homeDirectory = "/home/pdenti";
           stateVersion = "23.05";
-        };
 
-        nixpkgs.config.allowUnfree = true;
-        home.packages = [
-          pkgs.firefox
-          pkgs.google-chrome
-          pkgs.httpie
-          pkgs.dbeaver
-          pkgs.postman
-          pkgs.jetbrains.idea-ultimate
-          pkgs._1password-gui
-          pkgs.authy
-          pkgs.telegram-desktop
-          pkgs.zoom-us
-          pkgs.qFlipper
-          unstable.vscode-fhs
-        ];
+          packages = [
+            pkgs.firefox
+            pkgs.google-chrome
+            pkgs.httpie
+            pkgs.dbeaver
+            pkgs.postman
+            pkgs.jetbrains.idea-ultimate
+            pkgs._1password-gui
+            pkgs.authy
+            pkgs.telegram-desktop
+            pkgs.zoom-us
+            pkgs.qFlipper
+            unstable.vscode-fhs
+          ];
+        };
 
         programs.zsh = {
           enable = true;
