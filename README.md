@@ -33,7 +33,11 @@ Install SDKMAN manually, without updating zshrc
 * `curl -s "https://get.sdkman.io?rcupdate=false" | bash`
 * logout / login
 * `sdk install java 17.0.9-amzn`
-* `sdk install maven 3.9.5 `
+* `sdk install maven 3.9.5`
+
+Enable flatpak repo
+
+`flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo`
 
 ## Notes
 
