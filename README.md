@@ -1,6 +1,10 @@
 # My NixOS default config
 
-## WIP: Still Playing with NixOS
+For my work PCs, and my account only.
+
+Home Manager is enabled even if not strictly needed for myself only.
+
+## WIP: Still playing with NixOS
 
 Manual setup
 
