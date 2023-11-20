@@ -19,6 +19,11 @@ in
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
 
+# Lower swappiness
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 10;
+  };
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # docker
