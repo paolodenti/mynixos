@@ -31,7 +31,7 @@ TODO: check out agenix
 ## Manual installations (not the NixOS way)
 
 I am cutting here myself some slack, while I learn how to use NixOS in the right way,
-with nix-shell for different environmnts/projects, and flakes.
+with nix-shell for different environments/projects, and flakes.
 
 Install SDKMAN manually, without updating zshrc
 
