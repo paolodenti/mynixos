@@ -1,6 +1,6 @@
 # My NixOS default config
 
-For my work PCs, and my account only.
+For my PCs, and my account only.
 
 Home Manager is enabled even if not strictly needed for myself only.
 
