@@ -25,6 +25,7 @@ Manual setup
 
 * copy the private `age.txt` to `$HOME/.sops/age.txt`
 * `sops --decrypt --age $(agepublic) --output $HOME/.secrets mynixos/.secrets`
+* todo: which is the best way to copy secret files? (kubeconfigs, ssh keys, etc.)
 
 TODO: check out agenix
 
