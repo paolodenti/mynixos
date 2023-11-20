@@ -18,7 +18,7 @@ Manual setup
   * `nix-shell -p git vim`
   * `git clone https://github.com/paolodenti/mynixos.git`
   * `sudo cp mynixos/configuration.nix /etc/nixos/configuration.nix`
-  * update hostname, wifi, trackpad in `/etc/nixos/configuration.nix` (should be divided in different hosts)
+  * `sudo vi /etc/nixos/configuration.nix` and update hostname, wifi, trackpad, etc.
   * `sudo nixos-rebuild switch --upgrade`
 
 ## Install /home/pdenti secrets
