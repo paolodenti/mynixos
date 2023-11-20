@@ -19,6 +19,11 @@ in
   boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
 
+# Lower swappiness
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 10;
+  };
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # docker
@@ -287,6 +292,9 @@ in
   services.openssh.enable = true;
   services.openssh.settings.PermitRootLogin = "yes";
 
+  # Enable Flatpak.
+  services.flatpak.enable = true;
+
   # Auto Upgrade
   system.autoUpgrade.enable = true;
 
@@ -294,6 +302,13 @@ in
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
   networking.firewall.allowedUDPPorts = [ ];
   networking.firewall.enable = false;
+
+  # Automatic Garbage Collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
