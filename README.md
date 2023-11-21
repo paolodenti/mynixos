@@ -59,7 +59,7 @@ Enable flatpak repo
 sudo nix-channel --update && sudo nixos-rebuild switch --upgrade
 ```
 
-### To force garbage collect and clean boot menu (autogc is enabled
+### To force garbage collect and clean boot menu (autogc is enabled)
 
 ```
 clear-nix-boot-menu
