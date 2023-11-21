@@ -17,11 +17,13 @@ Manual setup
 sudo nix-channel --add https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz home-manager
 sudo nix-channel --add https://nixos.org/channels/nixos-unstable nixos-unstable
 sudo nix-channel --update
+
 nix-shell -p git
 cd /etc/nixos
 sudo git clone https://github.com/paolodenti/mynixos.git
 sudo rm configuration.nix
 sudo ln -s mynixos/hosts/<host name>/configuration.nix configuration.nix
+
 sudo nixos-rebuild switch --upgrade
 ```
 
