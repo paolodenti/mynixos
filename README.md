@@ -73,6 +73,7 @@ dconf dump / | dconf2nix
 
 ## TODO
 
+* restructure with common imports
 * check out agenix or sops-nix
 * move to flakes
 * get rid of the manual sw setups
