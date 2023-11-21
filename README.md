@@ -59,6 +59,12 @@ sudo nix-channel --update && sudo nixos-rebuild switch --upgrade
 clear-nix-boot-menu
 ```
 
+### To produce nix settings for the corrent dconf configuration
+
+```
+dconf dump / | dconf2nix
+```
+
 ## TODO
 
 * check out agenix or sops-nix
